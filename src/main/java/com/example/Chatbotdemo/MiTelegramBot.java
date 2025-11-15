@@ -1,6 +1,7 @@
 //librerias
 package com.example.Chatbotdemo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,16 +15,20 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
     private GroqService groqService;
     private final Map<String, String> estadoUsuario = new HashMap<>();
 
-    @Override
-    public String getBotUsername() { //el user del bot
-        return "MiNutri_bot";
-    }
+    @Value("${telegram.bot.username}") //user
+    private String botUsername;
 
+    @Value("${telegram.bot.token}") //token del bot
+    private String botToken;
     @Override
     public String getBotToken() {
-        return "8210997573:AAF0--8aNLNvfim5a7-upNIBy9N-gzMyZBA"; //mi bot token
+        return botToken;
     }
 
+    @Override
+    public String getBotUsername() {
+        return botUsername;
+    }
     @Override
     //sobreescribimos el metodo onUpdateReceived que le dira al bot que hacer cuando reciba un mensaje, este metodo se va a ir ejecutando automaticamente.
     public void onUpdateReceived(Update update) {
@@ -37,13 +42,13 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
         // Comando para finalizar sesión con el bot
         if (texto.equals("/finalizar") || texto.equals("/finalizar charla") || texto.equals("/finalizar conversacion")) {
             estadoUsuario.remove(chatId);
-            enviar(chatId, "Sesión finalizada 👋😊\nSi quieres volver a comenzar escribe /desayuno /almuerzo /merienda /cena o /finalizar.");
+            enviar(chatId, "Sesión finalizada 👋😊\nSi quieres volver a comenzar escribe /desayuno /almuerzo /merienda /cena.");
             return;
         }
 
         // Si el usuario envía “gracias” despues de que el bot termina la receta
         if (texto.contains("gracias") || texto.contains("muchas gracias")) {
-            enviar(chatId, "¡De nada! 😊 Me alegra ayudarte. Si querés volver a preparar otra comida, usa estos comandos:\n/desayuno\n/almuerzo\n/merienda\n/cena");
+            enviar(chatId, "¡De nada! 😊 Me alegra ayudarte. Si querés volver a preparar otra comida, usa estos comandos:\n/desayuno\n/almuerzo\n/merienda\n/cena\nSi quieres terminar la charla:\n/finalizar");
             return;
         }
 
@@ -52,7 +57,7 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
                 texto.contains("volver a empezar") ||
                 texto.contains("empezar de nuevo")) {
         //cualquiera de estas 3 opciones que elija el usuario el bot contestara de la siguiente forma:
-            enviar(chatId, "¡Perfecto! 🙌\nSolo usa uno de estos comandos para comenzar:\n/desayuno\n/almuerzo\n/merienda\n/cena");
+            enviar(chatId, "¡Perfecto! 🙌\nSolo usa uno de estos comandos para comenzar:\n/desayuno\n/almuerzo\n/merienda\n/cena\nSi quieres terminar la charla:\n/finalizar");
             return;
         }
 
@@ -70,7 +75,7 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
 
         //  condicional para mensajes NO nutricionales, devuelve un true si el mensaje es nutricional y si no un false(!).
         if (!esMensajeNutricional(texto)) {
-            enviar(chatId, "Soy tu asistente Nutricional 🥦 y solo puedo ayudarte con comidas.\nUsa estos comandos:\n/desayuno\n/almuerzo\n/merienda\n/cena\n\nSi quieres terminar la charla:\n/finalizar");
+            enviar(chatId, "No puedo contestar ese mensaje porque soy tu asistente Nutricional 🥦 y solo puedo ayudarte con comidas.\nUsa estos comandos:\n/desayuno\n/almuerzo\n/merienda\n/cena\n\nSi quieres terminar la charla:\n/finalizar");
             return;
         }
     }
