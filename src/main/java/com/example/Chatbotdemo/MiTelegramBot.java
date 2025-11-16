@@ -33,12 +33,52 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
     //sobreescribimos el metodo onUpdateReceived que le dira al bot que hacer cuando reciba un mensaje, este metodo se va a ir ejecutando automaticamente.
     public void onUpdateReceived(Update update) {
 
+        if (!update.hasMessage())
+            return;
+
+        // si el usuario manda una imagen/audio/sticker/documento
+        if (!update.getMessage().hasText()) {
+            String chatId = update.getMessage().getChatId().toString();
+            enviar(chatId,
+                    "No puedo procesar fotos, audios, videos o documentos 📄📸🎧.\n" +
+                            "Solo puedo ayudarte mediante texto usando estos comandos:\n" +
+                            "/desayuno\n/almuerzo\n/merienda\n/cena\n\nTambién podés finalizar con /finalizar.");
+            return;
+        }
+
         if (!update.hasMessage() || !update.getMessage().hasText())  //el bot solo seguira si recibe un texto inicial.
             return;
 
         String chatId = update.getMessage().getChatId().toString(); //identificador de usuario para devolver mensajes
         String texto = update.getMessage().getText().trim().toLowerCase(); //trae lo que escribe el usuario, le saca los espacios al inicio y al final y convierte a minusculas las palabras en mayusculas
 
+
+        // Comando /start → bienvenida
+        if (texto.equals("/start")) {
+            enviar(chatId,
+                    "¡Hola! 👋 Soy tu asistente Nutricional 🥦\n" +
+                            "Puedo ayudarte a preparar comidas saludables según tus ingredientes.\n\n" +
+                            "👉 *Comandos disponibles:*\n" +
+                            "/desayuno\n/almuerzo\n/merienda\n/cena\n\n" +
+                            "Si querés terminar la charla:\n/finalizar");
+            return;
+        }
+        //deteccion de saludos para el bot
+        String[] saludos = {
+                "hola", "holaa", "hola!", "buenas", "buen día", "buen dia",
+                "buenas tardes", "buenas noches", "que tal", "qué tal", "hola bot"
+        };
+
+        for (String s : saludos) {
+            if (texto.startsWith(s)) {
+                enviar(chatId,
+                        "¡Hola! 😊 ¿Cómo estás?\n" +
+                                "Estoy acá para ayudarte a preparar una comida saludable.\n" +
+                                "Podés decirme qué querés cocinar usando uno de estos comandos:\n" +
+                                "/desayuno\n/almuerzo\n/merienda\n/cena");
+                return;
+            }
+        }
         // Comando para finalizar sesión con el bot
         if (texto.equals("/finalizar") || texto.equals("/finalizar charla") || texto.equals("/finalizar conversacion")) {
             estadoUsuario.remove(chatId);
