@@ -46,9 +46,6 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
             return;
         }
 
-        if (!update.hasMessage() || !update.getMessage().hasText())  //el bot solo seguira si recibe un texto inicial.
-            return;
-
         String chatId = update.getMessage().getChatId().toString(); //identificador de usuario para devolver mensajes
         String texto = update.getMessage().getText().trim().toLowerCase(); //trae lo que escribe el usuario, le saca los espacios al inicio y al final y convierte a minusculas las palabras en mayusculas
 
