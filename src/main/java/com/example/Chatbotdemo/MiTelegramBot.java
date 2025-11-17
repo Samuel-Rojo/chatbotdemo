@@ -63,7 +63,7 @@ public class MiTelegramBot extends TelegramLongPollingBot {   //mi clase MiTeleg
         //deteccion de saludos para el bot
         String[] saludos = {
                 "hola", "holaa", "hola!", "buenas", "buen día", "buen dia",
-                "buenas tardes", "buenas noches", "que tal", "qué tal", "hola bot"
+                "buenas tardes", "buenas noches", "como estas", "qué tal", "hola bot"
         };
 
         for (String s : saludos) {
