@@ -28,8 +28,8 @@ public class GroqService {
             //mensaje que se le envia a groq
             Map<String, String> message = new HashMap<>();
             message.put("role", "user"); //el mensaje viene del usuario
-            message.put("content", mensajeUsuario);
-            body.put("messages", new Map[]{message});
+            message.put("content", mensajeUsuario); //lo que manda el usuario
+            body.put("messages", new Map[]{message}); //creara el arreglo "message" con ese unico mensaje y se lo enviara a groq 
             //combinaremos el cuerpo del JSON con los headers y este lo metera dentro de un objeto HttpEntity listo para enviar.
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
             ResponseEntity<Map> response = restTemplate.postForEntity(baseUrl, request, Map.class); //hace la peticion POST a la api de groq
